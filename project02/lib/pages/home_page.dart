@@ -10,12 +10,10 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   final _controller = TextEditingController();
+  String? _errorText;
 
-  List toDoList = [
-    ['Learn Flutter', false],
-    ['Build a Flutter App', false],
-    ['Publish the App', false],
-  ];
+  List toDoList = [];
+
   void checkboxChanged(bool? value, int index) {
     setState(() {
       toDoList[index][1] = !toDoList[index][1];
@@ -23,9 +21,14 @@ class _HomePageState extends State<HomePage> {
   }
 
   void addNewTask() {
+    if (_controller.text.isEmpty) {
+      setState(() => _errorText = 'Task must not be empty');
+      return;
+    }
     setState(() {
       toDoList.add([_controller.text, false]);
       _controller.clear();
+      _errorText = null;
     });
   }
 
@@ -34,7 +37,18 @@ class _HomePageState extends State<HomePage> {
       toDoList.removeAt(index);
     });
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Task deleted'), duration: Duration(seconds: 2)),
+      SnackBar(
+        content: Text(
+          'Task deleted',
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        duration: Duration(seconds: 2),
+        backgroundColor: Colors.red,
+      ),
     );
   }
 
@@ -49,23 +63,34 @@ class _HomePageState extends State<HomePage> {
         foregroundColor: Colors.white,
         titleTextStyle: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
       ),
-      body: ListView.builder(
-        itemCount: toDoList.length,
-        itemBuilder: (BuildContext context, int index) {
-          return ToDoList(
-            taskName: toDoList[index][0],
-            isDone: toDoList[index][1],
-            onChanged: (bool? value) {
-              setState(() {
-                toDoList[index][1] = value ?? false;
-              });
-            },
-            onDelete: (BuildContext context) {
-              deleteTask(context, index);
-            },
-          );
-        },
-      ),
+      body: toDoList.isEmpty
+          ? const Center(
+              child: Text(
+                "Let's create to do list",
+                style: TextStyle(
+                  fontSize: 28,
+                  fontWeight: FontWeight.w500,
+                  color: Colors.deepPurple,
+                ),
+              ),
+            )
+          : ListView.builder(
+              itemCount: toDoList.length,
+              itemBuilder: (BuildContext context, int index) {
+                return ToDoList(
+                  taskName: toDoList[index][0],
+                  isDone: toDoList[index][1],
+                  onChanged: (bool? value) {
+                    setState(() {
+                      toDoList[index][1] = value ?? false;
+                    });
+                  },
+                  onDelete: (BuildContext context) {
+                    deleteTask(context, index);
+                  },
+                );
+              },
+            ),
       floatingActionButton: Row(
         children: [
           Expanded(
@@ -73,8 +98,11 @@ class _HomePageState extends State<HomePage> {
               padding: const EdgeInsets.symmetric(horizontal: 36),
               child: TextField(
                 controller: _controller,
+                onSubmitted: (_) => addNewTask(),
+                onChanged: (_) => setState(() => _errorText = null),
                 decoration: InputDecoration(
                   hintText: 'Add a new task',
+                  errorText: _errorText,
                   hintStyle: TextStyle(
                     color: Colors.grey.shade600,
                     fontSize: 16,
