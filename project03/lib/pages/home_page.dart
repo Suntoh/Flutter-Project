@@ -1,5 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:project03/widgets/category_widget.dart';
+import 'package:project03/widgets/items_widget.dart';
+import 'package:project03/widgets/popular_widget.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -78,7 +81,11 @@ class _HomePageState extends State<HomePage> {
                     ),
                     Text(
                       "What do you want to Buy?",
-                      style: TextStyle(fontSize: 18, color: Colors.white),
+                      style: TextStyle(
+                        fontSize: 18,
+                        color: Colors.white24,
+                        shadows: [Shadow(blurRadius: 0.5)],
+                      ),
                     ),
                   ],
                 ),
@@ -116,6 +123,22 @@ class _HomePageState extends State<HomePage> {
                     Spacer(),
                     Icon(Icons.filter_list, size: 30),
                   ],
+                ),
+              ),
+
+              //Prducts Cards
+              Container(
+                padding: EdgeInsets.symmetric(vertical: 16),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(32),
+                    topRight: Radius.circular(32),
+                  ),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [CategoryWidget(), PopularWidget(), ItemsWidget()],
                 ),
               ),
             ],

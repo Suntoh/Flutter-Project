@@ -31,6 +31,7 @@ class SplashScreen extends StatelessWidget {
             ),
             SizedBox(height: 10),
             InkWell(
+              mouseCursor: SystemMouseCursors.click,
               onTap: () {
                 Navigator.pushReplacementNamed(context, '/home');
               },
